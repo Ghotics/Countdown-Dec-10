@@ -3,33 +3,378 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Countdown — August 18, 2026 at 16:35 (Europe/Bucharest)</title>
-<meta name="description" content="Live countdown timer to August 18, 2026 at 16:35 in the Europe/Bucharest time zone, with confetti celebration at zero.">
+<title>Countdown to December 10th 🎀</title>
+<meta name="description" content="Live countdown to Thursday 10 December 2026 at 00:00 Bucharest time, with a pink and a dark theme.">
+<meta name="theme-color" content="#FFE6EE">
+<script>
+  // Apply the saved theme before the page paints, so there is no flash of the wrong colours.
+  (function () {
+    try {
+      if (localStorage.getItem('countdown-theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.querySelector('meta[name="theme-color"]').content = '#1C0E18';
+      }
+    } catch (e) {}
+  })();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..800,0..100;1,9..144,400..800,0..100&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
-body{margin:0;font-family:Inter,sans-serif;background:#0b1020;color:#fff;display:grid;place-items:center;height:100vh}
-.wrap{text-align:center}.timer{display:flex;gap:20px;justify-content:center}.unit{background:#1a2240;padding:20px;border-radius:12px}.num{font-size:3rem;font-weight:800}
+  :root {
+    --bg: #FFE6EE;
+    --gingham: rgba(236, 120, 160, .16);
+    --lace: #FFFAFC;
+    --ink: #4A2235;
+    --soft: #8A4B66;
+    --accent: #D94677;
+    --deep: #A8284F;
+    --stitch: #F3A9C2;
+    --bow: #E2557F;
+    --bow-shade: #B8325C;
+    --shadow: rgba(168, 40, 79, .28);
+  }
+  html.dark {
+    --bg: #1C0E18;
+    --gingham: rgba(255, 141, 179, .05);
+    --lace: #2B1624;
+    --ink: #F7DCE6;
+    --soft: #C99AB0;
+    --accent: #FF8DB3;
+    --deep: #FFB3CC;
+    --stitch: #6E3353;
+    --bow: #E2668F;
+    --bow-shade: #9E2D55;
+    --shadow: rgba(0, 0, 0, .55);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: grid;
+    place-items: center;
+    padding: 5rem 1.25rem 3rem;
+    font-family: Fraunces, Georgia, serif;
+    font-variation-settings: "SOFT" 100;
+    color: var(--ink);
+    background-color: var(--bg);
+    /* Pink gingham: two crossing sets of translucent stripes */
+    background-image:
+      repeating-linear-gradient(0deg, var(--gingham) 0 24px, transparent 24px 48px),
+      repeating-linear-gradient(90deg, var(--gingham) 0 24px, transparent 24px 48px);
+  }
+  html.ready body,
+  html.ready .lace,
+  html.ready .theme-toggle {
+    transition: background-color .45s ease, color .45s ease, fill .45s ease, border-color .45s ease;
+  }
+
+  main { text-align: center; max-width: 40rem; }
+
+  .lead {
+    margin: 0;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--soft);
+  }
+  h1 {
+    margin: .1rem 0 1.5rem;
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    font-size: clamp(3.4rem, 15vw, 6.25rem);
+    line-height: 1.05;
+    color: var(--deep);
+  }
+
+  /* The doily with a bow tied on top */
+  .badge {
+    position: relative;
+    width: min(76vw, 330px);
+    margin: 0 auto;
+  }
+  .bow {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 38%;
+    margin: 0 auto -15%;
+    filter: drop-shadow(0 6px 6px var(--shadow));
+  }
+  .bow .loop, .bow .tail { fill: var(--bow); }
+  .bow .fold { fill: none; stroke: var(--bow-shade); stroke-width: 2.4; stroke-linecap: round; }
+  .bow .knot { fill: var(--bow-shade); }
+
+  .doily {
+    position: relative;
+    aspect-ratio: 1;
+    display: grid;
+    place-items: center;
+  }
+  .doily svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    filter: drop-shadow(0 20px 22px var(--shadow));
+  }
+  .lace { fill: var(--lace); }
+  .eyelet { fill: var(--bg); }
+  .stitch { fill: none; stroke: var(--stitch); stroke-width: 1.6; stroke-dasharray: 4 5; stroke-linecap: round; }
+
+  .days {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+  .days .num {
+    font-size: clamp(5rem, 24vw, 8.5rem);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    letter-spacing: -.02em;
+  }
+  .days .word {
+    margin-top: .35rem;
+    font-style: italic;
+    font-size: 1.35rem;
+    color: var(--soft);
+  }
+  .days.today .num {
+    font-family: "Great Vibes", cursive;
+    font-weight: 400;
+    font-size: clamp(4rem, 19vw, 6.5rem);
+    letter-spacing: 0;
+  }
+
+  .rest {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: .4rem .9rem;
+    margin: 2.5rem 0 0;
+    font-size: 1.1rem;
+  }
+  .rest[hidden] { display: none; }
+  .rest b {
+    font-size: 1.75rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    color: var(--deep);
+  }
+  .rest .word { font-style: italic; color: var(--soft); }
+  .rest .heart { color: var(--accent); font-size: 1rem; }
+
+  .when {
+    margin: 1.75rem 0 0;
+    font-size: .95rem;
+    color: var(--soft);
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .55rem 1.05rem;
+    font: inherit;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--deep);
+    background: var(--lace);
+    border: 1.5px solid var(--stitch);
+    border-radius: 999px;
+    box-shadow: 0 8px 18px -10px var(--shadow);
+    cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--accent); }
+  .theme-toggle:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  /* One entrance: the bow drops onto the doily */
+  @keyframes tie {
+    0% { transform: translateY(-26px) rotate(-8deg) scale(.85); opacity: 0; }
+    60% { transform: translateY(3px) rotate(3deg) scale(1.04); opacity: 1; }
+    100% { transform: none; }
+  }
+  .bow { animation: tie .9s cubic-bezier(.3, 1.4, .5, 1) .15s both; }
+
+  /* Heart shower when the countdown reaches zero */
+  .falling-heart {
+    position: fixed;
+    top: -2rem;
+    z-index: 20;
+    pointer-events: none;
+    color: var(--accent);
+    animation: fall linear forwards;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(var(--spin)); opacity: .2; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bow { animation: none; }
+    html.ready body, html.ready .lace, html.ready .theme-toggle { transition: none; }
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-<h1>Countdown to August 18, 2026 — 16:35 Bucharest time</h1>
-<div class="timer">
-<div class="unit"><div id="d" class="num"></div><div>Days</div></div>
-<div class="unit"><div id="h" class="num"></div><div>Hours</div></div>
-<div class="unit"><div id="m" class="num"></div><div>Minutes</div></div>
-<div class="unit"><div id="s" class="num"></div><div>Seconds</div></div>
-</div>
-<p id="done" style="display:none;font-size:2rem;color:#7cffc4">It's 16:35 on August 18, 2026 in Bucharest 🎉</p>
-</div>
+<button class="theme-toggle" id="theme-toggle" type="button">
+  <span class="icon" aria-hidden="true">🌙</span>
+  <span class="label">Dark mode</span>
+</button>
+
+<main>
+  <p class="lead" id="lead">counting down to</p>
+  <h1>December 10th</h1>
+
+  <div class="badge">
+    <svg class="bow" viewBox="0 0 120 84" aria-hidden="true">
+      <path class="tail" d="M55 42 C49 56 42 67 34 80 L46 76 L51 83 C56 68 59 55 60 45 Z"/>
+      <path class="tail" d="M65 42 C71 56 78 67 86 80 L74 76 L69 83 C64 68 61 55 60 45 Z"/>
+      <path class="loop" d="M60 39 C42 8 4 6 9 34 C13 56 44 52 60 39 Z"/>
+      <path class="loop" d="M60 39 C78 8 116 6 111 34 C107 56 76 52 60 39 Z"/>
+      <path class="fold" d="M52 36 C40 24 24 20 18 30"/>
+      <path class="fold" d="M68 36 C80 24 96 20 102 30"/>
+      <ellipse class="knot" cx="60" cy="40" rx="9.5" ry="11"/>
+    </svg>
+    <div class="doily">
+      <svg viewBox="-100 -100 200 200" aria-hidden="true" id="doily-art"></svg>
+      <div class="days" id="days-box">
+        <span class="num" id="d">--</span>
+        <span class="word" id="d-word">days</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="rest" id="rest">
+    <span><b id="h">--</b> <span class="word" id="h-word">hours</span></span>
+    <span class="heart" aria-hidden="true">♥</span>
+    <span><b id="m">--</b> <span class="word" id="m-word">minutes</span></span>
+    <span class="heart" aria-hidden="true">♥</span>
+    <span><b id="s">--</b> <span class="word" id="s-word">seconds</span></span>
+  </p>
+
+  <p class="when">Thursday 10 December 2026, 00:00 Bucharest time</p>
+</main>
+
 <script>
-function off(date,tz){const f=new Intl.DateTimeFormat('en-US',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});const p=Object.fromEntries(f.formatToParts(date).map(x=>[x.type,x.value]));return Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute,+p.second)-date.getTime();}
-function z2u(y,mo,d,h,mi,s,tz){const g=new Date(Date.UTC(y,mo-1,d,h,mi,s));return new Date(g.getTime()-off(g,tz));}
-const target=z2u(2026,8,18,16,35,0,'Europe/Bucharest');
-const ids={d:d,h:h,m:m,s:s};
-setInterval(()=>{let diff=target-new Date();if(diff<=0){for(let k in ids)ids[k].textContent='00';done.style.display='block';return;}
-let sec=Math.floor(diff/1000);ids.d.textContent=String(Math.floor(sec/86400)).padStart(2,'0');ids.h.textContent=String(Math.floor(sec%86400/3600)).padStart(2,'0');ids.m.textContent=String(Math.floor(sec%3600/60)).padStart(2,'0');ids.s.textContent=String(sec%60).padStart(2,'0');},1000);
+  // ---- Target: 10 December 2026 at 00:00 in Bucharest (UTC+2 in winter) ----
+  const target = new Date('2026-12-10T00:00:00+02:00');
+
+  // ---- Draw the lace doily: scalloped edge, eyelet holes, stitched ring ----
+  (function drawDoily() {
+    const svg = document.getElementById('doily-art');
+    const ns = 'http://www.w3.org/2000/svg';
+    const add = (tag, attrs) => {
+      const el = document.createElementNS(ns, tag);
+      for (const k in attrs) el.setAttribute(k, attrs[k]);
+      svg.appendChild(el);
+    };
+    const scallops = 30, R = 86;
+    for (let i = 0; i < scallops; i++) {
+      const a = (i / scallops) * Math.PI * 2;
+      add('circle', { class: 'lace', cx: (R * Math.cos(a)).toFixed(2), cy: (R * Math.sin(a)).toFixed(2), r: 10.5 });
+    }
+    add('circle', { class: 'lace', cx: 0, cy: 0, r: R });
+    for (let i = 0; i < scallops; i++) {
+      const a = (i / scallops) * Math.PI * 2;
+      add('circle', { class: 'eyelet', cx: ((R + 2) * Math.cos(a)).toFixed(2), cy: ((R + 2) * Math.sin(a)).toFixed(2), r: 2.3 });
+    }
+    add('circle', { class: 'stitch', cx: 0, cy: 0, r: 75 });
+  })();
+
+  // ---- Countdown ----
+  const el = id => document.getElementById(id);
+  const pad = n => String(n).padStart(2, '0');
+  const word = (n, one, many) => (n === 1 ? one : many);
+  let finished = false;
+
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      if (!finished) finish();
+      return;
+    }
+    const sec = Math.floor(diff / 1000);
+    const d = Math.floor(sec / 86400);
+    const h = Math.floor((sec % 86400) / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = sec % 60;
+    el('d').textContent = d;
+    el('d-word').textContent = word(d, 'day', 'days');
+    el('h').textContent = pad(h);
+    el('h-word').textContent = word(h, 'hour', 'hours');
+    el('m').textContent = pad(m);
+    el('m-word').textContent = word(m, 'minute', 'minutes');
+    el('s').textContent = pad(s);
+    el('s-word').textContent = word(s, 'second', 'seconds');
+  }
+
+  function finish() {
+    finished = true;
+    clearInterval(timer);
+    el('days-box').classList.add('today');
+    el('d').textContent = 'Today';
+    el('d-word').textContent = 'is the day';
+    el('rest').hidden = true;
+    el('lead').textContent = "it's finally";
+    document.title = "It's December 10th! 🎀";
+    heartShower();
+  }
+
+  function heartShower() {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    for (let i = 0; i < 45; i++) {
+      const heart = document.createElement('span');
+      heart.className = 'falling-heart';
+      heart.setAttribute('aria-hidden', 'true');
+      heart.textContent = Math.random() < .3 ? '🎀' : '♥';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (14 + Math.random() * 22) + 'px';
+      heart.style.setProperty('--spin', (Math.random() * 360 - 180) + 'deg');
+      heart.style.animationDuration = (3 + Math.random() * 3) + 's';
+      heart.style.animationDelay = (Math.random() * 1.5) + 's';
+      heart.addEventListener('animationend', () => heart.remove());
+      document.body.appendChild(heart);
+    }
+  }
+
+  const timer = setInterval(tick, 1000);
+  tick();
+
+  // ---- Theme toggle, remembered on this device ----
+  const root = document.documentElement;
+  const btn = el('theme-toggle');
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+
+  function showTheme(dark) {
+    root.classList.toggle('dark', dark);
+    btn.querySelector('.icon').textContent = dark ? '🌸' : '🌙';
+    btn.querySelector('.label').textContent = dark ? 'Pink mode' : 'Dark mode';
+    themeMeta.content = dark ? '#1C0E18' : '#FFE6EE';
+  }
+
+  btn.addEventListener('click', () => {
+    const dark = !root.classList.contains('dark');
+    showTheme(dark);
+    try { localStorage.setItem('countdown-theme', dark ? 'dark' : 'pink'); } catch (e) {}
+  });
+
+  showTheme(root.classList.contains('dark'));
+  // Turn on colour transitions only after the first paint
+  requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('ready')));
 </script>
-</body></html>
+</body>
+</html>
